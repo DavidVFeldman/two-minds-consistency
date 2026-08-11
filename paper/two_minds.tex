@@ -1,0 +1,969 @@
+% two_minds_1.tex --- first full draft
+% Title alternatives (pick one):
+%   Models of arithmetic of two minds about consistency
+%   Of two minds: machine-cutoff provability and the intensionality of Con(PA)
+%   Consistency verdicts are not model-invariant
+% Authorship: drafted for Feldman--Hamkins; adjust as agreed.
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+\usepackage{xcolor}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{question}[theorem]{Question}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{convention}[theorem]{Convention}
+
+\newcommand{\PA}{\mathrm{PA}}
+\newcommand{\Con}{\mathrm{Con}}
+\newcommand{\Pf}{\mathrm{Proof}}
+\newcommand{\Prov}{\mathrm{Pr}}
+\newcommand{\HT}[1]{\mathrm{H}_{#1}}
+\newcommand{\godel}[1]{\ulcorner #1 \urcorner}
+\newcommand{\N}{\mathbb{N}}
+
+% Draft-management macros
+\newcommand{\verify}[1]{\textcolor{red!70!black}{\textbf{[verify:} #1\textbf{]}}}
+
+\title[Of two minds about consistency]{Models of arithmetic of two minds about consistency}
+
+\author{David V. Feldman}
+\address{Department of Mathematics and Statistics, University of New Hampshire}
+\email{dvfinnh@gmail.com}
+
+\date{\today\ (draft 4)}
+
+\begin{document}
+
+\begin{abstract}
+For each $n$ we construct Turing machines $T_1,\dots,T_n$, none of which
+halts, and associated provability predicates
+$\Prov_{T_i}(x)$, asserting that $x$ has a proof appearing before $T_i$
+halts. Each $\Prov_{T_i}$ is $\PA$-provably a subpredicate of the standard
+provability predicate and defines exactly the standard provability relation
+in the standard model; in particular $\PA$ proves
+$\Con(\PA)\to\Con_{T_i}(\PA)$ for the associated consistency statements.
+We show, assuming only the consistency of $\PA$, that these are the
+\emph{only} implications: for every $S\subseteq\{1,\dots,n\}$ the theory
+\[
+\PA \;+\; \neg\Con(\PA) \;+\; \{\Con_{T_i}(\PA) : i\in S\}
+        \;+\; \{\neg\Con_{T_i}(\PA) : i\notin S\}
+\]
+is consistent. In particular, a single model of $\PA$ can satisfy
+$\Con_{T_1}(\PA)\wedge\neg\Con_{T_2}(\PA)$: whether a model of arithmetic
+``thinks $\PA$ is consistent'' is not an invariant of the model, but
+depends on the chosen arithmetization of provability. The proof combines
+Rosser's witness-comparison method with the recursion theorem, relocating
+the witness comparison from the syntax of a sentence into the dynamics of
+a machine. We also prove a normal form theorem: for every machine $T$,
+$\PA$ proves that $\Con_T(\PA)$ is equivalent to the disjunction of
+$\Con(\PA)$ with the assertion that $T$ halts before any inconsistency
+proof appears. Using it, we reduce the classification of the machine
+consistency statements up to provable equivalence to two sharply posed
+questions about $\Sigma_1$ sentences under witness comparison. The main
+results have been formally verified in Lean~4.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+G\"odel's second incompleteness theorem asserts that a consistent,
+sufficiently strong, effectively axiomatized theory such as $\PA$ neither
+proves nor refutes its own consistency statement $\Con(\PA)$, and the
+completeness theorem then yields models of $\PA$ satisfying $\Con(\PA)$
+alongside models satisfying $\neg\Con(\PA)$. In a loose way of speaking,
+one is tempted to say that some models of $\PA$ \emph{think} $\PA$ is
+consistent while others think it is not, as though this were a property of
+the model. But not so fast. The sentence $\Con(\PA)$ is not handed to us
+by the theory; it is manufactured from choices---a G\"odel numbering, a
+formalized proof predicate, an enumeration of the axioms---and the
+independence phenomenon is notoriously sensitive to these choices. The
+purpose of this note is to make the sensitivity vivid in a sharp form:
+we produce a \emph{single} model of $\PA$ which is of two minds about the
+consistency of $\PA$, satisfying one entirely natural-looking
+arithmetization of ``$\,\PA$ is consistent'' while refuting another, where
+both arithmetizations define exactly the true provability relation in the
+standard model. More generally, we classify completely the possible
+patterns of consistency verdicts for a natural family of such
+arithmetizations.
+
+That the consistency statement is intensional is of course a classical
+insight. Rosser's theorem \cite{Rosser1936} already provides a one-line
+witness: for the Rosser provability predicate
+\[
+\Prov^{R}(x) \;:=\; \exists y\,\bigl(\Pf(y,x)\wedge
+   \forall z\le y\,\neg\Pf(z,\godel{0{=}1})\bigr),
+\]
+the associated consistency statement is an outright theorem of $\PA$, so
+that any model of $\PA+\neg\Con(\PA)$ already satisfies
+consistency-according-to-Rosser while refuting
+consistency-according-to-Hilbert--Bernays---and the two predicates are
+extensionally identical in the standard model (assuming, as we do
+throughout, that $\PA$ is in fact consistent). Feferman's fundamental
+study \cite{Feferman1960} showed that varying the \emph{enumeration of the
+axioms} produces similar effects, and isolated conditions on an
+arithmetization under which the second incompleteness theorem is
+recovered; the derivability conditions of Hilbert--Bernays and L\"ob play
+the same role on the side of the proof predicate. There is by now a rough
+consensus among logicians that an acceptable formalization of provability
+ought to be provably equivalent to the standard one, precisely because
+predicates violating this permit the effects above; on this view the
+deviant predicates do not \emph{genuinely express} provability, and the
+second incompleteness theorem is not threatened. See Halbach and Visser
+\cite{HalbachVisser2014a,HalbachVisser2014b} for a careful contemporary
+analysis of the axes of intensionality, and \cite{Hamkins2022qeios} for
+striking effects obtained purely on the axis of axiom enumeration.
+
+We take no issue with that consensus; our point is that the consensus does
+not dissolve the descriptive question but rather poses it. Grant that the
+deviant predicates are deviant. They are nevertheless \emph{extensionally
+correct}: in the real world---in the standard model---they define the very
+same relation ``$y$ is a proof of $x$'' as the standard predicate, and the
+ones constructed here are even $\PA$-provably \emph{sound} subpredicates
+of the standard one, satisfying necessitation, and only ever
+\emph{undercounting} proofs. How wildly can the consistency verdicts of
+such predicates disagree, and how does the disagreement distribute across
+the models of $\PA$? The answer, it turns out, is: as wildly as is not
+outright provably impossible. We regard this as intensionality studied as
+\emph{geography} rather than as pathology---a complete map of where the
+verdicts can land---and the second incompleteness theorem itself supplies
+the engine of the construction.
+
+Our arithmetizations arise from a machine cutoff. For a Turing machine
+$T$ which (in fact) never halts, let $\Prov_T(x)$ assert that $x$ has a
+proof appearing strictly before $T$ halts, that is, a proof coded by some
+$y$ such that $T$ has not halted within $y$ steps. Since $T$ never really
+halts, $\Prov_T$ defines the standard provability relation in the standard
+model; and provably in $\PA$, whatever $\Prov_T$ counts as a proof, so
+does the standard predicate. In a model of $\PA+\neg\Con(\PA)$, however,
+the verdict of the associated consistency statement $\Con_T(\PA)$ is
+controlled by a race between two possibly nonstandard numbers: the least
+proof of $0{=}1$, and the halting time of $T$, if any. The main theorem
+states that this race can be rigged in every conceivable way,
+simultaneously for any finite number of machines.
+
+\begin{theorem}[Main Theorem; see Theorem~\ref{thm:main}]
+\label{thm:main-intro}
+Assume $\PA$ is consistent, and let $n\ge 1$. There exist Turing machines
+$T_1,\dots,T_n$, none of which halts, such that:
+\begin{enumerate}
+\item each $\Prov_{T_i}$ defines the standard provability relation in the
+standard model, and $\PA\vdash \Prov_{T_i}(x)\to\Prov(x)$, so in
+particular $\PA\vdash\Con(\PA)\to\Con_{T_i}(\PA)$;
+\item for every $S\subseteq\{1,\dots,n\}$, the theory
+\[
+\PA + \neg\Con(\PA) + \{\Con_{T_i}(\PA) : i\in S\}
+    + \{\neg\Con_{T_i}(\PA) : i\notin S\}
+\]
+is consistent.
+\end{enumerate}
+Consequently, the implications $\Con(\PA)\to\Con_{T_i}(\PA)$ generate all
+provable implications among the sentences
+$\Con(\PA),\Con_{T_1}(\PA),\dots,\Con_{T_n}(\PA)$, and the realizable
+verdict patterns in models of $\PA$ are exactly: all verdicts true, or
+$\Con(\PA)$ false and the remaining verdicts arbitrary.
+\end{theorem}
+
+Taking $n=2$ and $S=\{1\}$ yields the promised bifurcation.
+
+\begin{corollary}\label{cor:two-minds-intro}
+Assume $\PA$ is consistent. There are two arithmetizations of
+provability, each defining the standard provability relation in the
+standard model and each $\PA$-provably a subpredicate of the standard
+predicate, together with a single model $M\models\PA$, such that $M$
+satisfies the consistency of $\PA$ as formulated with the first and
+refutes it as formulated with the second.
+\end{corollary}
+
+The proof is a Rosser argument, but with a twist we found illuminating.
+In Rosser's construction the witness comparison---``my proof comes before
+any refutation''---is written into the \emph{syntax} of the sentence. Here
+the comparison is relocated into the \emph{dynamics} of the machines: by
+the recursion theorem, the machines $T_1,\dots,T_n$ jointly watch for a
+$\PA$-proof that some verdict pattern is impossible, and upon finding one,
+they conspire to \emph{instantiate} exactly that pattern, each machine
+halting or entering an eternal loop according to its role in it. Any proof
+constraining the pattern thereby defeats itself. No independence
+hypotheses on the machines are needed; the construction discharges,
+rather than assumes, the independence conditions posited in an earlier
+sketch of this result (see Remark~\ref{rem:dynamics}). The technique
+belongs to the witness-comparison tradition systematized by Guaspari and
+Solovay \cite{GuaspariSolovay1979}, and the resulting consistency
+statements $\Con_T(\PA)$ are $\Pi_1$ sentences strictly intermediate
+between the provable and $\Con(\PA)$, cousins of the slow consistency
+statement of Friedman, Rathjen and Weiermann \cite{FRW2013} and of
+Pudl\'ak's partial consistency statements \cite{Pudlak1985}, with a
+self-referentially timed rather than proof-theoretically graded cutoff.
+We discuss these connections, and the precise fate of the derivability
+conditions, in Section~\ref{sec:remarks}. In Section~\ref{sec:which} we
+turn from constructing particular machine consistency statements to
+classifying all of them: a normal form theorem
+(Proposition~\ref{prop:normalform}) identifies the sentences $\Con_T(\PA)$,
+up to $\PA$-provable equivalence, with the disjunctions of $\Con(\PA)$
+with sentences asserting a Rosser-style victory of a machine over
+inconsistency, and the classification problem then resolves into two
+questions about $\Sigma_1$ sentences under witness comparison, which we
+pose but do not settle.
+
+Everything below assumes only the consistency of $\PA$; no soundness or
+$\omega$-consistency assumptions are used,\footnote{With one scoping
+caveat, which the formalization mentioned below makes precise: clauses
+(1)--(3) of Theorem~\ref{thm:main} use only the consistency of $\PA$
+(this is machine-verified). The final classification clause additionally
+uses the consistency of $\PA+\Con(\PA)$ --- equivalently
+$\PA\nvdash\neg\Con(\PA)$ --- which follows from the arithmetical
+soundness of $\PA$ but not from its consistency alone.} and nothing is
+special about $\PA$ beyond what is needed for the usual coding
+(Remark~\ref{rem:base-theory}).
+
+The main results of this paper --- Theorem~\ref{thm:main} in full
+(clauses (1)--(3), including the necessitation and
+extensional-correctness parts of clause (1)),
+Corollary~\ref{cor:two-minds}, Proposition~\ref{prop:normalform}, and
+Proposition~\ref{prop:realization} in the stage-formula form of
+Remark~\ref{rem:pacing} --- have been formally verified in Lean~4 over
+the Foundation library, with no unproved obligations and the standard
+axiom footprint. The verified development takes the purely syntactic
+form described in Remark~\ref{rem:syntactic}, and is carried out over an
+arbitrary $\Delta_1$-axiomatized recursively enumerable extension of
+$\mathsf{I}\Sigma_1$; the specialization of the hypotheses to $\PA$
+itself additionally invokes the library's stated-but-unproved instance
+of the standard fact that $\PA$ is $\Delta_1$-axiomatized. The
+verification artifact is available from the author.
+% [repository link to be added]
+
+\section{Machine-cutoff provability predicates}\label{sec:defs}
+
+\begin{convention}\label{conv:coding}
+Fix a standard G\"odel numbering and a standard proof predicate
+$\Pf(y,x)$ for $\PA$, with $\Prov(x):=\exists y\,\Pf(y,x)$ and
+$\Con(\PA):=\neg\Prov(\godel{0{=}1})$, satisfying the usual properties:
+$\Pf$ is $\Delta_1$ in $\PA$, each proof codes a sequence of formulas
+with a uniquely determined conclusion (a convenience only; see the
+tie-break in the proof of Theorem~\ref{thm:main}), and the
+Hilbert--Bernays--L\"ob derivability conditions hold for $\Prov$. For a
+Turing machine $T$ (with a fixed standard coding of machines and
+computations), let $\HT{T}(y)$ denote the formula ``$T$, run on empty
+input, halts within $y$ steps.'' We arrange the coding so that, provably
+in $\PA$: $\HT{T}(y)$ is $\Delta_1$; $\HT{T}$ is monotone, i.e.\
+$\HT{T}(y)\wedge y\le z\to\HT{T}(z)$; and computations are provably
+deterministic. For standard numerals these are the usual facts about
+formalized finite simulations. In fact all that is ever used of
+$\HT{T}$ below is that it is a provably monotone $\Delta_1$ predicate of
+$y$; the machine, the determinism, and the halting-state bookkeeping are
+presentational, a point the formalization exploits
+(Remark~\ref{rem:syntactic}). % [bookkeeping: all standard; in a weak-base-theory version one would take H_T as Delta_0(exp) and track induction, cf. Remark on base theory]
+\end{convention}
+
+\begin{definition}\label{def:PrT}
+For a Turing machine $T$, define
+\[
+\Prov_T(x) \;:=\; \exists y\,\bigl(\Pf(y,x)\wedge\neg\HT{T}(y)\bigr),
+\qquad
+\Con_T(\PA) \;:=\; \neg\Prov_T(\godel{0{=}1}).
+\]
+Thus $\Prov_T$ counts exactly those proofs which appear before $T$ halts,
+and all proofs if $T$ never halts. Note that $\Con_T(\PA)$ is
+$\PA$-provably equivalent to the $\Pi_1$ sentence
+$\forall y\,(\Pf(y,\godel{0{=}1})\to\HT{T}(y))$.
+\end{definition}
+
+\begin{lemma}\label{lem:sub}
+For every machine $T$:
+\begin{enumerate}
+\item $\PA\vdash\forall x\,(\Prov_T(x)\to\Prov(x))$; hence
+      $\PA\vdash\Con(\PA)\to\Con_T(\PA)$.
+\item If $T$ never halts, then $\Prov_T$ and $\Prov$ define the same
+      relation in the standard model $\N$, namely true provability in
+      $\PA$; moreover, for every standard sentence $\varphi$, if
+      $\PA\vdash\varphi$ then $\PA\vdash\Prov_T(\godel{\varphi})$
+      (necessitation).
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(1) is immediate from the definition. For (2): if $T$ never halts, then
+for each standard $y$ the sentence $\neg\HT{T}(\bar y)$ is a true
+$\Delta_1$ statement about a finite simulation, hence provable in $\PA$;
+so in $\N$ the clause $\neg\HT{T}(y)$ is vacuously satisfied and
+$\Prov_T$ coincides with $\Prov$, while if $\PA\vdash\varphi$ with proof
+coded by the standard number $y$, then
+$\PA\vdash\Pf(\bar y,\godel{\varphi})\wedge\neg\HT{T}(\bar y)$, giving
+$\PA\vdash\Prov_T(\godel{\varphi})$.
+\end{proof}
+
+Lemma~\ref{lem:sub}(1) already settles half of the classification: in any
+model of $\PA+\Con(\PA)$, every verdict $\Con_T(\PA)$ comes out true.
+All the freedom, if there is any, lives inside the models of
+$\PA+\neg\Con(\PA)$, where it is governed by a race between the least
+proof of $0{=}1$ and the halting of $T$. The next section makes the race
+explicit.
+
+\section{Pattern sentences}\label{sec:patterns}
+
+Fix machines $T_1,\dots,T_n$. For a set $S\subseteq\{1,\dots,n\}$, define
+the \emph{pattern sentence}
+\[
+\sigma_S \;:=\; \exists p\,\Bigl(\Pf(p,\godel{0{=}1})
+   \;\wedge\; \forall q<p\,\neg\Pf(q,\godel{0{=}1})
+   \;\wedge\; \bigwedge_{i\in S}\HT{T_i}(p)
+   \;\wedge\; \bigwedge_{i\notin S}\neg\HT{T_i}(p)\Bigr),
+\]
+asserting that there is a least proof $p$ of $0{=}1$, and that exactly the
+machines $T_i$ with $i\in S$ have halted by stage $p$.
+
+\begin{lemma}[Reformulation Lemma]\label{lem:pattern}
+For each $S\subseteq\{1,\dots,n\}$,
+\[
+\PA\;\vdash\;\sigma_S\;\longleftrightarrow\;
+\Bigl(\neg\Con(\PA)\wedge\bigwedge_{i\in S}\Con_{T_i}(\PA)
+      \wedge\bigwedge_{i\notin S}\neg\Con_{T_i}(\PA)\Bigr).
+\]
+Consequently, the theory
+$\PA+\neg\Con(\PA)+\{\Con_{T_i}(\PA):i\in S\}
++\{\neg\Con_{T_i}(\PA):i\notin S\}$
+is consistent if and only if $\PA\nvdash\neg\sigma_S$.
+\end{lemma}
+
+\begin{proof}
+Work in $\PA$. Suppose $\sigma_S$, witnessed by the least inconsistency
+proof $p$. Certainly $\neg\Con(\PA)$. For $i\in S$: given any $y$ with
+$\Pf(y,\godel{0{=}1})$, minimality gives $p\le y$, and monotonicity of
+$\HT{T_i}$ gives $\HT{T_i}(y)$; as $y$ was arbitrary, $\Con_{T_i}(\PA)$
+holds in the $\Pi_1$ form of Definition~\ref{def:PrT}. For $i\notin S$:
+the witness $p$ itself satisfies
+$\Pf(p,\godel{0{=}1})\wedge\neg\HT{T_i}(p)$, so
+$\Prov_{T_i}(\godel{0{=}1})$, i.e.\ $\neg\Con_{T_i}(\PA)$.
+
+Conversely, suppose $\neg\Con(\PA)$ together with the displayed pattern of
+verdicts. By $\neg\Con(\PA)$ and the least number principle there is a
+least inconsistency proof $p$. For $i\in S$: $\Con_{T_i}(\PA)$ applied to
+$p$ yields $\HT{T_i}(p)$. For $i\notin S$: $\neg\Con_{T_i}(\PA)$ provides
+some $y$ with $\Pf(y,\godel{0{=}1})\wedge\neg\HT{T_i}(y)$; minimality
+gives $p\le y$, and monotonicity (contrapositively) gives
+$\neg\HT{T_i}(p)$. So $p$ witnesses $\sigma_S$.
+
+The final claim is the completeness theorem plus the observation that the
+displayed theory is $\PA$-provably equivalent to $\PA+\sigma_S$.
+\end{proof}
+
+The pattern sentences are, we would suggest, the real objects of study
+here: the classification problem for verdict patterns is exactly the
+question of which $\neg\sigma_S$ are provable, and the machines will now
+be built so that none of them is.
+
+\section{The construction and the main theorem}\label{sec:main}
+
+\begin{theorem}\label{thm:main}
+Assume $\PA$ is consistent, and let $n\ge1$. There exist Turing machines
+$T_1,\dots,T_n$, none of which halts, such that
+$\PA\nvdash\neg\sigma_S$ for every $S\subseteq\{1,\dots,n\}$.
+Consequently, by Lemmas~\ref{lem:sub} and~\ref{lem:pattern}:
+\begin{enumerate}
+\item each $\Prov_{T_i}$ defines true $\PA$-provability in $\N$, is
+$\PA$-provably a subpredicate of $\Prov$, and satisfies necessitation;
+\item $\PA\vdash\Con(\PA)\to\Con_{T_i}(\PA)$ for each $i$; and
+\item for every $S\subseteq\{1,\dots,n\}$ the theory
+\[
+\PA+\neg\Con(\PA)+\{\Con_{T_i}(\PA):i\in S\}
+   +\{\neg\Con_{T_i}(\PA):i\notin S\}
+\]
+is consistent.
+\end{enumerate}
+In particular, the only provable implications among
+$\Con(\PA),\Con_{T_1}(\PA),\dots,\Con_{T_n}(\PA)$ are those generated by
+the implications $\Con(\PA)\to\Con_{T_i}(\PA)$.
+\end{theorem}
+
+\begin{proof}
+\emph{The construction.} By the recursion theorem (in its standard
+$n$-fold form, or by applying the ordinary recursion theorem to a single
+controller index from which the $n$ machines are uniformly computed), we
+may construct machines $T_1,\dots,T_n$, each with access to the full
+tuple of indices, behaving as follows. Each $T_i$ performs the same
+synchronized search, scanning $y=0,1,2,\dots$ in order and checking
+whether $y$ codes a $\PA$-proof whose conclusion is one of the $2^n$
+\emph{watched sentences} $\neg\sigma_S$, $S\subseteq\{1,\dots,n\}$
+(these sentences are computed from the indices, and are pairwise
+distinct; if a single stage codes proofs of several watched sentences,
+the trigger adopts the least pattern among them, in some fixed ordering
+of the patterns --- this tie-break makes the construction independent of
+any uniqueness convention for conclusions). If the search finds a least
+trigger $y_0$, with adopted pattern $S^*$, then:
+\begin{itemize}
+\item if $i\in S^*$, machine $T_i$ halts immediately;
+\item if $i\notin S^*$, machine $T_i$ enters a designated absorbing loop
+state, in which it remains forever.
+\end{itemize}
+If the search never triggers, the machines search forever. Thus the
+family reads the first metamathematical verdict about itself and
+conspires to instantiate exactly the pattern just ``refuted.'' We arrange
+the loop state explicitly so that $\PA$ proves, by induction, that a
+machine in the loop state at some stage is in it at every later stage
+and never halts.
+
+\emph{No watched sentence is provable.} Suppose toward a contradiction
+that $\PA\vdash\neg\sigma_{S}$ for some $S$; then the search really
+triggers, say least at $y_0$ (a standard number), with adopted pattern
+$S^*$ (which need not be the $S$ we started from --- the contradiction
+below runs through $S^*$). Note that $\neg\sigma_{S^*}$ is really
+provable, $y_0$ coding a proof of it. The subsequent
+behavior of each machine is a concrete finite computational fact: there
+is a standard number $t$, computable from $y_0$, such that each $T_i$
+with $i\in S^*$ halts within $t$ steps, and each $T_i$ with $i\notin S^*$
+enters the loop state within $t$ steps. Being true $\Delta_1$ statements
+about finite simulations, these facts are provable:
+\[
+\PA\vdash\HT{T_i}(\bar t)\ \ (i\in S^*),
+\qquad
+\PA\vdash\forall y\,\neg\HT{T_i}(y)\ \ (i\notin S^*),
+\]
+the latter by combining the provable finite fact that $T_i$ is in the
+loop state at stage $\bar t$ with the provable absorption of the loop
+state.
+
+Now reason inside $\PA+\neg\Con(\PA)$. By the least number principle
+there is a least inconsistency proof $p$. Suppose first $p>\bar t$. Then
+for $i\in S^*$, monotonicity and $\HT{T_i}(\bar t)$ give $\HT{T_i}(p)$;
+and for $i\notin S^*$ we have $\neg\HT{T_i}(p)$ outright. So $p$
+witnesses $\sigma_{S^*}$---contradicting the $\PA$-provable
+$\neg\sigma_{S^*}$. Hence $\PA+\neg\Con(\PA)\vdash p\le\bar t$, and so
+\[
+\PA+\neg\Con(\PA)\;\vdash\;\exists q\le\bar t\,\Pf(q,\godel{0{=}1}).
+\]
+But $t$ is standard and $\PA$ is (really) consistent, so for each
+standard $q\le t$ the sentence $\neg\Pf(\bar q,\godel{0{=}1})$ is a true
+$\Delta_1$ sentence, hence $\PA$-provable; conjoining these finitely many
+facts, $\PA\vdash\forall q\le\bar t\,\neg\Pf(q,\godel{0{=}1})$.
+Therefore $\PA+\neg\Con(\PA)$ is inconsistent, so
+$\PA\vdash\Con(\PA)$---contradicting the second incompleteness theorem,
+which applies since $\PA$ is consistent.
+
+\emph{Conclusion.} No watched sentence is provable; hence in the real
+world the search never triggers, no $T_i$ ever halts, and
+Lemma~\ref{lem:sub} yields (1) and (2). For (3), since
+$\PA\nvdash\neg\sigma_S$, the theory $\PA+\sigma_S$ is consistent, and
+Lemma~\ref{lem:pattern} identifies it with the displayed theory. For the
+final claim: any purported provable implication not generated by
+$\Con(\PA)\to\Con_{T_i}(\PA)$ would exclude one of the verdict patterns
+shown consistent in (2) and (3), or a pattern with all verdicts true,
+which holds in any model of $\PA+\Con(\PA)$.
+\end{proof}
+
+\begin{corollary}[A model of two minds]\label{cor:two-minds}
+Assume $\PA$ is consistent. With $n=2$ and $S=\{1\}$ in
+Theorem~\ref{thm:main}, there is a model $M\models\PA$ with
+\[
+M\models \Con_{T_1}(\PA)\wedge\neg\Con_{T_2}(\PA),
+\]
+although $\Prov_{T_1}$ and $\Prov_{T_2}$ both define true
+$\PA$-provability in the standard model, both are $\PA$-provably sound
+subpredicates of the standard provability predicate, and both satisfy
+necessitation. Whether a model of $\PA$ ``thinks $\PA$ is consistent'' is
+thus not a property of the model alone.
+\end{corollary}
+
+\begin{remark}[The syntactic reading]\label{rem:syntactic}
+The construction admits an equivalent, purely syntactic description,
+which is the form taken by the machine-checked proof. By the
+simultaneous diagonal lemma there are sentences $\delta_S$
+($S\subseteq\{1,\dots,n\}$), pairwise distinct, with
+$\PA\vdash\delta_S\leftrightarrow\neg\sigma_S$, where the stage
+predicates standing in for the $\HT{T_i}$ are explicit, non-self-referential
+$\Delta_1$ formulas reading the codes $\godel{\delta_{S'}}$ as fixed
+numerals: ``some stage $y_0\le y$ is least among stages coding a proof
+of some $\delta_{S'}$, and the least pattern proved at $y_0$ contains
+$i$.'' The witness comparison, which the machine formulation relocates
+from syntax into dynamics, is thereby relocated back: the family
+$(\delta_S)$ is a simultaneous Rosser-style fixed point, each member
+asserting that its own pattern is not the one instantiated at the least
+trigger, and no recursion theorem beyond the diagonal lemma is needed.
+The two descriptions are intertranslatable; we find the dynamical one
+the more vivid and the syntactic one the more economical to verify.
+\end{remark}
+
+\begin{remark}[Nonstandard dynamics; independence discharged]
+\label{rem:dynamics}
+An earlier sketch of this result posited, as hypotheses, the mutual
+independence of the halting statements of the machines and their joint
+independence from $\Con(\PA)$, and then faced the problem---correctly
+identified in that sketch---that Boolean independence cannot by itself
+control the \emph{relative position} of nonstandard witnesses: one needs
+$T_i$ to halt \emph{below} the least inconsistency proof, and no
+combination of independence hypotheses delivers an order-type. The
+construction above dissolves the problem rather than solving it: the
+machines are not chosen independent, they are chosen self-referential, so
+that any proof constraining the verdict pattern defeats itself, and the
+positional control is exactly what the pattern sentences $\sigma_S$
+assert.
+
+It is worth pausing over what the machines actually do inside a model
+$M\models\PA+\neg\Con(\PA)$. Since every sentence is $M$-provable there,
+each watched sentence has a (nonstandard) proof in $M$, so from $M$'s
+internal point of view the search \emph{does} trigger, at some
+nonstandard stage, and the machines then halt or loop according to the
+$M$-least trigger's pattern $S^*_M$. The theorem says that the model may
+be chosen so that this internal drama plays out in any prescribed
+position relative to the least inconsistency proof. In the real world,
+meanwhile, the search runs forever and nothing ever happens: the machines
+are, one might say, waiting for a contradiction that never comes.
+\end{remark}
+
+\section{Remarks, connections, and questions}\label{sec:remarks}
+
+\begin{remark}[The derivability conditions, and how the escape works]
+\label{rem:HBL}
+Each $\Prov_{T_i}$ satisfies the first derivability condition
+(necessitation, Lemma~\ref{lem:sub}), but must fail the second: a
+$\PA$-verified closure of $\Prov_{T_i}$ under modus ponens would, with
+necessitation and provable $\Sigma_1$-completeness for $\Prov_{T_i}$,
+put $\Prov_{T_i}$ back under the hypotheses of the second incompleteness
+theorem in L\"ob's form, and the analysis below shows $\Con_{T_i}(\PA)$
+behaves incompatibly with that. Concretely the failure is visible:
+modus ponens applied to proofs below the cutoff produces a longer proof,
+which the cutoff may decapitate. The third condition (provable
+$\Sigma_1$-completeness \emph{for $\Prov_{T_i}$ itself}) fails for the
+same reason: certifying a $\Prov_{T_i}$-fact requires a proof appearing
+in time. It is worth contrasting the shape of the escape with Rosser's:
+Rosser's consistency statement becomes an outright theorem of $\PA$,
+whereas our $\Con_{T_i}(\PA)$ remains unprovable---indeed
+$\PA+\neg\Con_{T_i}(\PA)$ is consistent by Theorem~\ref{thm:main}---and
+unrefutable, even over $\PA+\neg\Con(\PA)$. The deviation from the
+standard predicate manifests not as a collapse of the consistency
+statement into provability but as its detachment from $\neg\Con(\PA)$:
+the standard verdict no longer decides the deviant one.
+\end{remark}
+
+\begin{remark}[Intermediate consistency statements]\label{rem:intermediate}
+Each $\Con_{T_i}(\PA)$ is a $\Pi_1$ sentence with
+$\PA\vdash\Con(\PA)\to\Con_{T_i}(\PA)$,
+$\PA\nvdash\Con_{T_i}(\PA)$, and
+$\PA+\Con_{T_i}(\PA)\nvdash\Con(\PA)$: a nontrivial consistency-like
+statement strictly intermediate between the provable and full
+$\Con(\PA)$. In spirit, $\Con_T(\PA)$ is a partial or cut-off consistency
+statement---``there is no inconsistency proof of size below the halting
+time of $T$''---placing it in the company of Pudl\'ak's finite and
+restricted consistency statements \cite{Pudlak1985} and of the slow
+consistency of Friedman, Rathjen, and Weiermann \cite{FRW2013} (see also
+Henk and Pakhomov \cite{HenkPakhomov}), but with a cutoff timed
+self-referentially by the recursion theorem rather than graded by a
+proof-theoretic hierarchy. It would be interesting to locate the
+$\Con_{T}(\PA)$ of Theorem~\ref{thm:main} in the interpretability degrees
+alongside those statements. % [tone down / expand after we check FRW and Pudlak carefully]
+\end{remark}
+
+\begin{remark}[Other axes of intensionality]\label{rem:axes}
+The construction here varies the proof predicate while holding the
+G\"odel numbering and axiom enumeration fixed. Feferman
+\cite{Feferman1960} showed how much can be achieved by varying the
+enumeration of axioms alone; a modern instance of that trick, in which a
+$\PA$-enumeration is arranged to acquire the consistency strength of
+large cardinal hypotheses, appears in \cite{Hamkins2022qeios}. Halbach
+and Visser \cite{HalbachVisser2014a,HalbachVisser2014b} taxonomize the
+axes systematically. It seems fair to describe the present contribution,
+against that background, as: the machine-cutoff formulation; the
+complete classification of verdict patterns for finitely many
+extensionally correct, provably sound subpredicates; and the resulting
+single-model bifurcation phenomenon of
+Corollary~\ref{cor:two-minds}.
+\end{remark}
+
+\begin{remark}[Base theory]\label{rem:base-theory}
+We have stated everything for $\PA$ for concreteness, but the argument
+uses only: $\Delta_1$ representation of the relevant predicates with
+provable monotonicity, the least number principle for $\Delta_1$
+formulas, provable $\Sigma_1$-completeness for the standard predicate at
+standard instances, the diagonal lemma, and the second incompleteness
+theorem. Accordingly, the machine-checked development mentioned in the
+introduction is carried out over an arbitrary $\Delta_1$-axiomatized
+recursively enumerable theory extending $\mathsf{I}\Sigma_1$, and
+Theorem~\ref{thm:main}, Corollary~\ref{cor:two-minds}, and
+Proposition~\ref{prop:normalform} hold at that generality; the
+statements for $\PA$ are instances.
+\end{remark}
+
+Further questions appear at the end of the next section.
+
+\section{Which sentences are machine consistency statements?}
+\label{sec:which}
+
+Question: which sentences $\theta$ arise, up to $\PA$-provable
+equivalence, as $\Con_T(\PA)$ for a machine $T$ that never halts? By
+Lemma~\ref{lem:sub}, $\PA\vdash\Con(\PA)\to\theta$ is necessary, and one
+might naively conjecture it sufficient, which would make the machine
+consistency statements a normal form for all $\Pi_1$ consequences of
+consistency. The situation is more delicate and, we think, more
+interesting. The key is to make explicit the Rosser-style race that has
+been implicit throughout.
+
+\begin{definition}\label{def:HaltR}
+For a machine $T$, let $\mathrm{HaltAt}_T(s)$ be the $\Delta_1$ formula
+asserting that $T$ halts exactly at step $s$ (provably, such $s$ is
+unique if it exists), and define
+\[
+\mathrm{Halt}^R(T) \;:=\; \exists s\,\bigl(\mathrm{HaltAt}_T(s)
+   \wedge \forall q<s\,\neg\Pf(q,\godel{0{=}1})\bigr),
+\]
+a $\Sigma_1$ sentence asserting that \emph{$T$ halts before any
+inconsistency proof appears}---that $T$ wins the Rosser race against
+inconsistency. For a never-halting $T$, $\mathrm{Halt}^R(T)$ is false
+in $\N$.
+\end{definition}
+
+\begin{proposition}[Normal form]\label{prop:normalform}
+For \emph{every} machine $T$,
+\[
+\PA\;\vdash\;\Con_T(\PA)\;\longleftrightarrow\;
+\Con(\PA)\vee\mathrm{Halt}^R(T).
+\]
+Equivalently, with $\sigma_{\{1\}}$ the pattern sentence of
+Section~\ref{sec:patterns} for the single machine $T$:
+$\PA\vdash\sigma_{\{1\}}\leftrightarrow
+\neg\Con(\PA)\wedge\mathrm{Halt}^R(T)$.
+\end{proposition}
+
+\begin{proof}
+Work in $\PA$. ($\leftarrow$) $\Con(\PA)\to\Con_T(\PA)$ is
+Lemma~\ref{lem:sub}. Suppose $\mathrm{Halt}^R(T)$, witnessed by $s$, and
+let $y$ be any inconsistency proof; then $y\ge s$ by the witness clause,
+so $\HT{T}(y)$ by monotonicity, giving $\Con_T(\PA)$ in its $\Pi_1$ form.
+($\rightarrow$) Suppose $\Con_T(\PA)$; if $\Con(\PA)$ we are done, so
+suppose also $\neg\Con(\PA)$, with least inconsistency proof $p$.
+Applying $\Con_T(\PA)$ to $p$ gives $\HT{T}(p)$, so $T$ halts at some
+$s\le p$; and for $q<s\le p$, minimality of $p$ gives
+$\neg\Pf(q,\godel{0{=}1})$. Thus $\mathrm{Halt}^R(T)$.
+\end{proof}
+
+Thus every machine consistency statement asserts exactly:
+\emph{either $\PA$ is consistent, or the machine beat the inconsistency
+to the tape.} The classification problem therefore splits along the two
+disjuncts. Writing $[\,\cdot\,]$ for $\PA$-provable equivalence classes,
+Proposition~\ref{prop:normalform} gives
+\[
+\{[\Con_T(\PA)] : T\text{ never halts}\}
+\;=\;
+\{[\Con(\PA)\vee\rho] : \rho\in\mathcal{H}\},
+\qquad
+\mathcal{H}:=\{[\mathrm{Halt}^R(T)] : T\text{ never halts}\},
+\]
+and $\mathcal{H}$ consists of ($\equiv$-classes of) $\Sigma_1$ sentences
+false in $\N$. The next proposition shows $\mathcal{H}$ is plentiful:
+every $\Sigma_1$ sentence false in $\N$ contributes its
+\emph{Rosser truncation} to $\mathcal{H}$, at a pacing determined by a
+machine implementation.
+
+\begin{proposition}[Realization]\label{prop:realization}
+Let $\rho=\exists x\,\delta(x)$ be a $\Sigma_1$ sentence
+($\delta\in\Delta_0$, without loss of generality) false in $\N$. Let
+$T_\rho$ be the machine that checks $\delta(0),\delta(1),\dots$ in order
+and halts upon first finding a witness, and let $c(x)$ denote the
+$\PA$-provably total, provably strictly monotone function giving the step
+at which $T_\rho$ completes the check of $x$. Then $T_\rho$ never halts,
+and
+\[
+\PA\;\vdash\;\mathrm{Halt}^R(T_\rho)\;\longleftrightarrow\;\rho^{R,c},
+\qquad\text{where}\quad
+\rho^{R,c}:=\exists x\,\bigl(\delta(x)\wedge
+   \forall q<c(x)\,\neg\Pf(q,\godel{0{=}1})\bigr).
+\]
+Consequently $\Con(\PA)\vee\rho^{R,c}$ is, up to provable equivalence, a
+machine consistency statement, namely $\Con_{T_\rho}(\PA)$.
+\end{proposition}
+
+\begin{proof}
+$T_\rho$ never halts since $\rho$ is false in $\N$. Work in $\PA$. If
+$\mathrm{Halt}^R(T_\rho)$ holds with witness $s$, then provably $s=c(x_0)$
+for the least witness $x_0$ of $\delta$, and the clause
+$\forall q<s\,\neg\Pf(q,\godel{0{=}1})$ is exactly the truncation clause
+at $x_0$; so $\rho^{R,c}$ holds. Conversely, given $x$ with $\delta(x)$
+and no inconsistency proof below $c(x)$, the least witness $x_0\le x$
+satisfies $c(x_0)\le c(x)$ by monotonicity, so $T_\rho$ halts at
+$c(x_0)$ with no inconsistency proof below it, giving
+$\mathrm{Halt}^R(T_\rho)$.
+\end{proof}
+
+\begin{remark}[The pacing is an artifact]\label{rem:pacing}
+The pacing function $c$ belongs to the machine presentation, not to the
+mathematics. Working directly with monotone $\Delta_1$ stage formulas
+$\eta(y)$ in place of machines --- as the formalization does
+(Remark~\ref{rem:syntactic}) --- one may take
+$\eta_\rho(y):=\exists x\le y\,\delta(x)$, and the first stage at which
+$\eta_\rho$ fires \emph{is} the least witness of $\rho$: the truncation
+of Proposition~\ref{prop:realization} lands at $c=\mathrm{id}$, i.e.,
+at
+\[
+\rho^{R}\;:=\;\exists x\,\bigl(\delta(x)\wedge\forall x'<x\,\neg\delta(x')
+\wedge\forall q<x\,\neg\Pf(q,\godel{0{=}1})\bigr).
+\]
+Question~\ref{q:obstructionB} is accordingly better phrased
+presentation-theoretically: is every $\Sigma_1$ sentence false in $\N$
+provably equivalent to $\pi^{R}$ for \emph{some} $\Sigma_1$ presentation
+$\pi$ of it? The sensitivity of $\pi^R$ to the choice of presentation is
+then precisely the Guaspari--Solovay phenomenon. The stage-formula form
+of Proposition~\ref{prop:realization} just described --- with
+$\eta_\rho$ in place of $T_\rho$ and truncation at the least witness ---
+is among the machine-verified results.
+\end{remark}
+
+\begin{corollary}[Reduction of the classification]\label{cor:reduction}
+A sentence $\theta$ is $\PA$-provably equivalent to $\Con_T(\PA)$ for
+some never-halting $T$ if and only if
+$\PA\vdash\theta\leftrightarrow\Con(\PA)\vee\rho$ for some
+$\rho\in\mathcal{H}$. In particular, the naive conjecture above holds if
+and only if both of the following do:
+\begin{enumerate}
+\item[\textup{(A)}] every $\Pi_1$ sentence $\theta$ with
+$\PA\vdash\Con(\PA)\to\theta$ satisfies: $\theta\wedge\neg\Con(\PA)$ is
+$\PA$-provably equivalent to a $\Sigma_1$ sentence; and
+\item[\textup{(B)}] every $\Sigma_1$ sentence false in $\N$ is
+$\PA$-provably equivalent to $\mathrm{Halt}^R(T)$ for some never-halting
+$T$---equivalently, is provably equivalent to a Rosser truncation
+$\rho^{R,c}$ of some $\Sigma_1$ sentence at some machine pacing $c$.
+\end{enumerate}
+\end{corollary}
+
+\begin{proof}
+The displayed equality of classes gives the first claim. For the second:
+if $\PA\vdash\Con(\PA)\to\theta$, then provably
+$\theta\leftrightarrow(\theta\wedge\Con(\PA))\vee(\theta\wedge\neg\Con(\PA))
+\leftrightarrow\Con(\PA)\vee(\theta\wedge\neg\Con(\PA))$, so $\theta$ is
+of the required form if and only if $\theta\wedge\neg\Con(\PA)$ is
+equivalent to a member of $\mathcal{H}$; condition (A) supplies
+$\Sigma_1$-ness and condition (B) upgrades $\Sigma_1$-ness (falsity in
+$\N$ being automatic, since $\theta\wedge\neg\Con(\PA)$ is false in $\N$
+by the actual consistency of $\PA$) to membership in $\mathcal{H}$.
+\end{proof}
+
+We suspect both (A) and (B) fail, so that the machine consistency
+statements form a proper---and, by
+Proposition~\ref{prop:realization}, still remarkably rich---subclass of
+the $\Pi_1$ consequences of consistency; but we have not proved either
+failure, and we record the two halves as questions.
+
+\begin{question}[Obstruction A]\label{q:obstructionA}
+Is there a $\Pi_1$ sentence $\theta$ with
+$\PA\vdash\Con(\PA)\to\theta$ such that $\theta\wedge\neg\Con(\PA)$ is
+not $\PA$-provably equivalent to any $\Sigma_1$ sentence? The slow
+consistency statement of \cite{FRW2013} seems a natural candidate: over
+$\PA+\neg\Con(\PA)$ with least inconsistency proof $p$, slow consistency
+asserts a $\Pi_1$-flavored domination condition tying the convergence of
+$F_{\varepsilon_0}$ to the position of $p$, with no evident $\Sigma_1$
+reformulation. Preservation of $\Sigma_1$ sentences under end-extensions
+suggests a strategy: exhibit a model of
+$\PA+\neg\Con(\PA)+\mathrm{Con}^{\mathrm{slow}}$ with an end-extension
+to a model of $\PA+\neg\Con(\PA)+\neg\mathrm{Con}^{\mathrm{slow}}$.
+% [The end-extension must preserve p as least inconsistency proof ---
+%  automatic, since initial segments and Sigma_1 facts are preserved and
+%  no smaller proofs appear. What must be arranged is new convergence of
+%  F_{eps_0} at a point with insufficient room below p. Check against
+%  FRW's model constructions; this may be close to their interpolation
+%  arguments.]
+\end{question}
+
+\begin{question}[Obstruction B]\label{q:obstructionB}
+Is every $\Sigma_1$ sentence false in $\N$ provably equivalent to
+$\mathrm{Halt}^R(T)$ for some never-halting $T$ --- equivalently
+(Remark~\ref{rem:pacing}), to a Rosser truncation $\pi^R$ of some
+$\Sigma_1$ presentation $\pi$ of it? The truncation changes the
+sentence, in general:
+$\pi^{R}$ provably implies $\pi$, but the converse asks every model's
+witness to appear before its inconsistency proofs, which is a
+genuine positional demand. The case
+$\PA\vdash\rho\to\neg\Con(\PA)$ seems especially delicate: there,
+$\mathrm{Halt}^R(T)\equiv\rho$ would require the machine's Rosser
+victory---which the machine achieves precisely by seeing \emph{no}
+inconsistency proof before halting---to provably certify that
+inconsistency proofs exist beyond its halting time. We expect the
+witness-comparison methods of Guaspari and Solovay
+\cite{GuaspariSolovay1979} (see also Lindstr\"om
+\cite{Lindstrom2003}) to be the right tools here, in either direction.
+% [Even the Boolean closure of the class H is unclear, for the same
+%  timing reasons: running two machines in parallel halves the clock,
+%  which shifts the truncation point. Worth a lemma either way.]
+\end{question}
+
+\begin{question}\label{q:infinite}
+Theorem~\ref{thm:main} handles each finite $n$, with machines depending
+on $n$. Is there a single uniformly computable infinite family
+$(T_i)_{i\in\omega}$, none halting, realizing every ``locally
+permitted'' verdict pattern---for instance, such that for every set
+$A\subseteq\omega$ that is $\Sigma_1$-definable in a given model of
+$\PA+\neg\Con(\PA)$\dots\ ---in an appropriate formulation? Already the
+right statement of the infinitary classification seems delicate, since
+$\sigma_S$ becomes infinitary.
+\end{question}
+
+\begin{question}\label{q:iterate}
+The map $T\mapsto\Con_T(\PA)$ invites iteration: one may form
+$\Con_T(\PA+\Con_{T'}(\PA))$ and so on. What hierarchy results, under
+provability or interpretability, and how does it interact with the
+classical progressions of iterated consistency?
+\end{question}
+
+\subsection*{Acknowledgments}
+The author is grateful to Joel David Hamkins for generous advice and
+correspondence on these questions, in particular concerning the
+intensionality of provability predicates and the effects obtainable by
+varying the enumeration of axioms, and to the participants in the
+MathOverflow discussion where an early version of the question was
+posed. The formal verification reported in the introduction was carried
+out with Aristotle (Harmonic), over the Foundation library of the
+Formalized Formal Logic project. % [add MO link; add grant info if any;
+% repository link for the Lean artifact]
+
+\begin{thebibliography}{99}
+
+\bibitem{Feferman1960}
+S.~Feferman,
+\emph{Arithmetization of metamathematics in a general setting},
+Fund. Math. \textbf{49} (1960), 35--92.
+
+\bibitem{FRW2013}
+S.-D.~Friedman, M.~Rathjen, and A.~Weiermann,
+\emph{Slow consistency},
+Ann. Pure Appl. Logic \textbf{164} (2013), no.~3, 382--393.
+
+\bibitem{GuaspariSolovay1979}
+D.~Guaspari and R.~M.~Solovay,
+\emph{Rosser sentences},
+Ann. Math. Logic \textbf{16} (1979), no.~1, 81--99.
+
+\bibitem{HalbachVisser2014a}
+V.~Halbach and A.~Visser,
+\emph{Self-reference in arithmetic I},
+Rev. Symb. Log. \textbf{7} (2014), no.~4, 671--691.
+
+\bibitem{HalbachVisser2014b}
+V.~Halbach and A.~Visser,
+\emph{Self-reference in arithmetic II},
+Rev. Symb. Log. \textbf{7} (2014), no.~4, 692--712.
+
+\bibitem{Hamkins2022qeios}
+J.~D.~Hamkins,
+\emph{Nonlinearity in the hierarchy of large cardinal consistency
+strength}, Qeios (2022), \url{https://www.qeios.com/read/T63YDP}.
+% [verify exact title/year against the posted version]
+
+\bibitem{HenkPakhomov}
+P.~Henk and F.~Pakhomov,
+\emph{Slow and ordinary provability for Peano arithmetic},
+preprint, arXiv:1602.01822.
+% [verify status --- may have appeared; update]
+
+\bibitem{Lindstrom2003}
+P.~Lindstr\"om,
+\emph{Aspects of Incompleteness},
+Lecture Notes in Logic \textbf{10}, 2nd ed., A K Peters, 2003.
+
+\bibitem{Pudlak1985}
+P.~Pudl\'ak,
+\emph{Cuts, consistency statements and interpretations},
+J. Symbolic Logic \textbf{50} (1985), no.~2, 423--441.
+
+\bibitem{Rosser1936}
+J.~B.~Rosser,
+\emph{Extensions of some theorems of G\"odel and Church},
+J. Symbolic Logic \textbf{1} (1936), no.~3, 87--91.
+
+\end{thebibliography}
+
+% ============================================================
+% DRAFT NOTES (not for publication) --- updated for draft 4
+%
+% -2. NEW IN DRAFT 4: mini round 3 landed and validated. Necessitation
+%    (`necessitation`) and extensional identity over N (`provBefore_nat_iff`)
+%    are now verified, so the intro's clause-(1) scoping was strengthened
+%    and the pending-comment deleted; Prop 6.4 (stage-formula form,
+%    `haltR_rhoStage_iff`) joined the verified list (intro + Remark on
+%    pacing). Raw #print axioms archived in the artifact (AXIOMS.txt);
+%    BUILD.md now documents the pinned triple and restore procedure.
+%    HONEST CAVEAT, reflected in the intro paragraph: the acceptance test
+%    `main (T := PA)` additionally depends on Foundation's
+%    `PA_delta1Definable` --- a literal `axiom` in the library stubbing
+%    the standard fact that PA is Delta_1-axiomatized (independently
+%    confirmed in Foundation source at the pin, Examples.lean:17). The
+%    generic development (all fourteen named results) is free of it.
+%    If Foundation later proves the instance, delete the caveat clause.
+%    REMAINING before submission: repository link (intro + acks), MO link.
+%
+% -1. NEW IN DRAFT 3: implemented edits E1-E7 from the round-2 validation
+%    memo, following full Lean verification of Thm 4.1, Cor 4.2, Prop 6.2:
+%      E1 Remark 4.3 (syntactic reading / simultaneous Rosser fixed point)
+%      E2 tie-break in Conv 2.1 + proof of Thm 4.1 (unique conclusions
+%         now a convenience, not a load-bearing assumption)
+%      E3 Remark 6.5 (pacing artifact) + restated Obstruction B
+%      E4 scope footnote on "assuming only Con(PA)" (clauses (1)-(3)
+%         machine-verified from Con alone; final clause needs PA |/- ~Con)
+%      E5 Remark base-theory upgraded to verified claim (Delta_1-axiomatized
+%         r.e. extensions of ISigma1)
+%      E6 eliminability note in Conv 2.1
+%      E7 formalization paragraph in intro + Aristotle/Foundation acks
+%    PENDING before submission: repository link (two places); Aristotle
+%    mini round 3 (necessitation corollary, extensional-identity corollary,
+%    PA-instantiation example, committed #print axioms outputs); MO link.
+%    If mini round 3 lands, delete the pending-comment in the intro
+%    paragraph and consider strengthening the intro's clause-(1) scoping.
+%
+% 0. NEW IN DRAFT 2 (single-author; JDH thanked in acks):
+%    Section 6 replaces the old naive Question ("is every Pi_1 consequence
+%    of Con a Con_T?"). The naive guess appears to be WRONG, or at least
+%    much subtler, and the section records what an evening's push showed:
+%    (a) PROVED normal form: Con_T <-> Con v Halt^R(T), for ALL T (the
+%        non-halting hypothesis is only needed for extensional
+%        correctness, not for the equivalence). Proof is 6 lines; checked
+%        both directions twice. Note the pleasant reading: "either
+%        consistency, or the machine beat the inconsistency to the tape."
+%    (b) PROVED realization: every Sigma_1 rho false in N contributes its
+%        clock-paced Rosser truncation rho^{R,c} to the class H. Note the
+%        truncation point is the machine CLOCK c(x), not the witness x
+%        itself --- the simulation overhead is ineliminable and this is
+%        exactly why (B) below is open rather than trivial. An earlier
+%        attempt truncated at the witness value; the two versions are
+%        provably inequivalent in general. Do not "simplify" this.
+%    (c) The classification reduces (Cor 6.5) to Obstructions (A) and (B),
+%        both posed as questions. Current beliefs: (A) fails (slow
+%        consistency the candidate; end-extension strategy sketched in
+%        the question); (B) fails (the rho -> ~Con case looks fatal:
+%        Halt^R(T) sees no inconsistency proof below the halt, yet would
+%        have to certify inconsistency above it; smells like it needs a
+%        reflection-like principle PA does not prove --- BUT this is a
+%        smell, not a proof; a clever speeded-up-proof-system machine
+%        might yet do it. Guaspari--Solovay / Lindstrom Ch. on Sigma_1
+%        sentences and witness comparison is where to look).
+%    Sanity checks run on (a): T = never-halting trivial machine gives
+%    Halt^R = false, Con_T = Con (correct); T = halt-at-step-0 machine
+%    gives Halt^R = true, Con_T = provable (correct: every proof of 0=1
+%    has H_T). These cost nothing and catch orientation errors.
+%
+% 1. [RESOLVED in draft 1] A tempting "independence for free" corollary
+%    (all Boolean patterns of Halt(T_i) vs ~Con realized) turned out to be
+%    subtler than it looks: Halt(T_i) provably implies only "some watched
+%    sentence is provable," not ~Con(PA); and sigma_S controls halting BY
+%    stage p, not eventual halting. Replaced by Remark on nonstandard
+%    dynamics, which makes the (correct and more interesting) point that
+%    in models of ~Con the machines really do trigger, at nonstandard
+%    stages. If we want a precise independence statement later, it needs
+%    its own argument; note models of Con(PA) can still prove some
+%    ~sigma_S internally... no wait, PA |/- ~sigma_S absolutely, but a
+%    MODEL of Con can satisfy Pr(~sigma_S) with a nonstandard proof. So
+%    even in Con-models the internal trigger may fire. Nice. Discuss.
+%
+% 2. Decide: state main theorem for PA only (current) or push to EA/S^1_2.
+%
+% 3. Question 6.6 formulation is a placeholder; sharpen or cut.
+%
+% 4. Add MathOverflow provenance in acknowledgments + link.
+%
+% 5. Abstract currently promises "recursion theorem" --- confirm we want
+%    the controller-index phrasing in Section 4 or the n-fold statement.
+% ============================================================
+
+\end{document}

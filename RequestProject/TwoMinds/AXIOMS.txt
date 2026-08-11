@@ -1,0 +1,36 @@
+Raw `#print axioms` output for the TwoMinds development
+=======================================================
+
+Generated with the pinned toolchain (Lean v4.28.0-rc1, Mathlib 58d8468,
+Foundation 55eb586; see BUILD.md) via `lake env lean` on a file that imports
+`RequestProject.TwoMinds.Necessitation` and runs `#print axioms` on each result.
+
+All results below have exactly the standard footprint
+`[propext, Classical.choice, Quot.sound]`:
+
+'TwoMinds.main' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.two_minds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.patternTheory_consistent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.no_watched_provable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.never_fires' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.reformulation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.conBefore_iff_consistent_or_haltR' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.necessitation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.provBefore_nat_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.provBefore_Theta_eval' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.not_fires_of_standard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.haltR_rhoStage_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.etaRho_proper' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TwoMinds.etaRho_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+Acceptance test for the paper's own instance `T := 𝗣𝗔` (validation memo A.3.4).
+The Main Theorem elaborates at `𝗣𝗔`; the resulting term additionally depends on
+Foundation's `PA_delta1Definable` axiom — Foundation's stub for the standard fact
+that `𝗣𝗔` is `Δ₁`-axiomatized (`𝗜𝚺₁ ⪯ 𝗣𝗔` and `Consistent 𝗣𝗔` are genuine
+instances, the latter from arithmetical soundness). The generic development above is
+free of this axiom; only the `𝗣𝗔` instantiation uses it:
+
+'pa_acceptance_test' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound,
+ LO.FirstOrder.Arithmetic.PA_delta1Definable]

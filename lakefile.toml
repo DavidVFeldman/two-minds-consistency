@@ -1,0 +1,11 @@
+name = "RequestProject"
+defaultTargets = ["RequestProject"]
+
+[[require]]
+name = "foundation"
+git = "https://github.com/FormalizedFormalLogic/Foundation"
+rev = "55eb586aed3f8791b422f2b78a94028c27fcad3a"
+
+[[lean_lib]]
+name = "RequestProject"
+globs = ["RequestProject.+"]

@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this formalization, please cite it as below."
+title: "Models of arithmetic of two minds about consistency: Lean 4 formalization"
+abstract: >-
+  A complete Lean 4 formalization, over the Foundation library, of the results
+  of the paper "Models of arithmetic of two minds about consistency": machine
+  consistency statements, the normal form theorem, and the main theorem that
+  every pattern of consistency verdicts consistent with the provable
+  implications is realized.
+type: software
+authors:
+  - family-names: Feldman
+    given-names: David V.
+    affiliation: University of New Hampshire
+    orcid: "https://orcid.org/0000-0001-6943-4833"
+license: MIT
+repository-code: "https://github.com/DavidVFeldman/two-minds-consistency"
+keywords:
+  - Lean 4
+  - formalization
+  - Peano arithmetic
+  - provability predicate
+  - Goedel incompleteness
+  - intensionality
+# doi: "10.5281/zenodo.XXXXXXX"

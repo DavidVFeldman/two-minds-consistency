@@ -1,5 +1,7 @@
 # Models of arithmetic of two minds about consistency
 
+[![DOI](https://zenodo.org/badge/1330420705.svg)](https://doi.org/10.5281/zenodo.21881585)
+
 Paper and complete Lean 4 formalization.
 
 Whether a model of arithmetic "thinks PA is consistent" is not a property of
@@ -86,8 +88,14 @@ published sources are byte-identical to the verified ones.
 
 ## Citing
 
-See [`CITATION.cff`](CITATION.cff). Please cite the paper for the mathematics
-and this repository for the formalization.
+See [`CITATION.cff`](CITATION.cff). Please cite the paper for the mathematics,
+and this repository for the formalization:
+
+> Feldman, D. V. (2026). *Models of arithmetic of two minds about consistency:
+> Lean 4 formalization.* Zenodo. https://doi.org/10.5281/zenodo.21881585
+
+That DOI covers all versions and always resolves to the latest; the release
+archived here as v1.0.0 is `10.5281/zenodo.21881586`.
 
 ## License
 

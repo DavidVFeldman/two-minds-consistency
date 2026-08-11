@@ -10,7 +10,7 @@ abstract: >-
 type: software
 authors:
   - family-names: Feldman
-    given-names: David V.
+    given-names: David Victor
     affiliation: University of New Hampshire
     orcid: "https://orcid.org/0000-0001-6943-4833"
 license: MIT
@@ -22,4 +22,4 @@ keywords:
   - provability predicate
   - Goedel incompleteness
   - intensionality
-# doi: "10.5281/zenodo.XXXXXXX"
+doi: "10.5281/zenodo.21881585"

@@ -34,11 +34,17 @@
 
 \title[Of two minds about consistency]{Models of arithmetic of two minds about consistency}
 
-\author{David V. Feldman}
+\author{David Victor Feldman}
 \address{Department of Mathematics and Statistics, University of New Hampshire}
 \email{dvfinnh@gmail.com}
 
-\date{\today\ (draft 4)}
+\date{\today\ (draft 6)}
+
+\subjclass[2020]{Primary 03F40; Secondary 03F30, 03C62, 03H15, 68V20}
+
+\keywords{Consistency statements, provability predicates, intensionality,
+G\"odel's second incompleteness theorem, Rosser sentences, models of
+arithmetic, formal verification}
 
 \begin{document}
 
@@ -237,8 +243,9 @@ arbitrary $\Delta_1$-axiomatized recursively enumerable extension of
 $\mathsf{I}\Sigma_1$; the specialization of the hypotheses to $\PA$
 itself additionally invokes the library's stated-but-unproved instance
 of the standard fact that $\PA$ is $\Delta_1$-axiomatized. The
-verification artifact is available from the author.
-% [repository link to be added]
+verification artifact is available at
+\texttt{https://github.com/DavidVFeldman/two-minds-consistency}
+and archived at \texttt{https://doi.org/10.5281/zenodo.21881585}.
 
 \section{Machine-cutoff provability predicates}\label{sec:defs}
 
@@ -812,12 +819,10 @@ classical progressions of iterated consistency?
 The author is grateful to Joel David Hamkins for generous advice and
 correspondence on these questions, in particular concerning the
 intensionality of provability predicates and the effects obtainable by
-varying the enumeration of axioms, and to the participants in the
-MathOverflow discussion where an early version of the question was
-posed. The formal verification reported in the introduction was carried
-out with Aristotle (Harmonic), over the Foundation library of the
-Formalized Formal Logic project. % [add MO link; add grant info if any;
-% repository link for the Lean artifact]
+varying the enumeration of axioms. The formal verification reported in
+the introduction was carried out with Aristotle (Harmonic), over the
+Foundation library of the Formalized Formal Logic project.
+% [add grant info if any]
 
 \begin{thebibliography}{99}
 
@@ -892,7 +897,8 @@ J. Symbolic Logic \textbf{1} (1936), no.~3, 87--91.
 %    confirmed in Foundation source at the pin, Examples.lean:17). The
 %    generic development (all fourteen named results) is free of it.
 %    If Foundation later proves the instance, delete the caveat clause.
-%    REMAINING before submission: repository link (intro + acks), MO link.
+%    REMAINING before submission: none outstanding. Repository/DOI filled in
+%    (concept DOI 10.5281/zenodo.21881585; version DOI ...586, v1.0.0).
 %
 % -1. NEW IN DRAFT 3: implemented edits E1-E7 from the round-2 validation
 %    memo, following full Lean verification of Thm 4.1, Cor 4.2, Prop 6.2:
@@ -908,7 +914,7 @@ J. Symbolic Logic \textbf{1} (1936), no.~3, 87--91.
 %      E7 formalization paragraph in intro + Aristotle/Foundation acks
 %    PENDING before submission: repository link (two places); Aristotle
 %    mini round 3 (necessitation corollary, extensional-identity corollary,
-%    PA-instantiation example, committed #print axioms outputs); MO link.
+%    PA-instantiation example, committed #print axioms outputs).
 %    If mini round 3 lands, delete the pending-comment in the intro
 %    paragraph and consider strengthening the intro's clause-(1) scoping.
 %
@@ -960,7 +966,9 @@ J. Symbolic Logic \textbf{1} (1936), no.~3, 87--91.
 %
 % 3. Question 6.6 formulation is a placeholder; sharpen or cut.
 %
-% 4. Add MathOverflow provenance in acknowledgments + link.
+% 4. [DROPPED in draft 6] There was no MathOverflow thread on this topic;
+%    the exchange with Hamkins was direct correspondence. Acknowledgments
+%    corrected accordingly.
 %
 % 5. Abstract currently promises "recursion theorem" --- confirm we want
 %    the controller-index phrasing in Section 4 or the n-fold statement.

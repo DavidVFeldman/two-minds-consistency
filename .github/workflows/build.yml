@@ -18,39 +18,24 @@ jobs:
           use-mathlib-cache: true
           build-args: "RequestProject"
 
-      - name: No `sorry` in the development
+      - name: Axiom audit (semantic — parses #print axioms, not source text)
         run: |
-          if grep -rn --include='*.lean' '\bsorry\b' RequestProject/; then
-            echo "::error::found sorry in RequestProject/"
-            exit 1
+          set -o pipefail
+          lake env lean RequestProject/TwoMinds/AxiomCheck.lean | tee axiom-audit.txt
+          # Extract the bracketed axiom list from each line and reject anything
+          # outside the standard footprint.  Source text is never grepped:
+          # doc comments and declaration names false-positive on "sorry".
+          BAD=$(sed -n 's/.*depends on axioms: \[\(.*\)\]/\1/p' axiom-audit.txt \
+                | tr ',' '\n' | tr -d ' []' | sort -u \
+                | grep -vE '^(propext|Classical\.choice|Quot\.sound)$' || true)
+          if [ -n "$BAD" ]; then
+            echo "::error::non-standard axioms found:"; echo "$BAD"; exit 1
           fi
-          echo "clean: no sorry"
-
-      - name: No added axioms in the development
-        run: |
-          if grep -rnE --include='*.lean' '^[[:space:]]*axiom[[:space:]]' RequestProject/; then
-            echo "::error::found an axiom declaration in RequestProject/"
-            exit 1
+          COUNT=$(grep -c 'depends on axioms' axiom-audit.txt)
+          if [ "$COUNT" -lt 14 ]; then
+            echo "::error::expected 14 audited results, saw $COUNT"; exit 1
           fi
-          echo "clean: no axiom declarations"
-
-      - name: Axiom audit
-        run: |
-          cat > audit.lean <<'LEAN'
-          import RequestProject.TwoMinds.Necessitation
-          import RequestProject.TwoMinds.StageFormulaProp64
-          #print axioms TwoMinds.main
-          #print axioms TwoMinds.two_minds
-          #print axioms TwoMinds.no_watched_provable
-          #print axioms TwoMinds.patternTheory_consistent
-          #print axioms TwoMinds.reformulation
-          #print axioms TwoMinds.never_fires
-          #print axioms TwoMinds.necessitation
-          #print axioms TwoMinds.provBefore_nat_iff
-          #print axioms TwoMinds.conBefore_iff_consistent_or_haltR
-          #print axioms TwoMinds.haltR_rhoStage_iff
-          LEAN
-          lake env lean audit.lean | tee axiom-audit.txt
+          echo "clean: $COUNT results, standard footprint only"
 
       - name: Upload axiom audit
         uses: actions/upload-artifact@v4

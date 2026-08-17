@@ -6,3 +6,14 @@
 *.trace
 *.hash
 .DS_Store
+
+# LaTeX aux
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk

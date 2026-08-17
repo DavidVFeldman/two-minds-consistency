@@ -49,8 +49,8 @@ translations used, and one honest caveat about the `PA` instantiation.
 | Lemma 3.1 (Reformulation) | `TwoMinds.reformulation` |
 | Proposition 6.2 (Normal form) | `TwoMinds.conBefore_iff_consistent_or_haltR` |
 | Proposition 6.4 (Realization, stage-formula form) | `TwoMinds.haltR_rhoStage_iff` |
-| Theorem 4.1(1), necessitation | `TwoMinds.necessitation` |
-| Theorem 4.1(1), extensional correctness over ℕ | `TwoMinds.provBefore_nat_iff` |
+| Theorem 4.1(1), necessitation | `TwoMinds.necessitation` (also clause 4 of `main`) |
+| Theorem 4.1(1), extensional correctness over ℕ | `TwoMinds.provBefore_nat_iff` (also clause 5 of `main`) |
 
 The development is carried out over an **arbitrary** `Δ₁`-axiomatized
 recursively enumerable theory `T` extending `IΣ₁`; the statements for `PA` in

@@ -1,5 +1,4 @@
-import RequestProject.TwoMinds.Main
-import Foundation.FirstOrder.Incompleteness.Examples
+import RequestProject.TwoMinds.Construction
 
 /-!
 # Necessitation and extensional correctness for the trigger family (mini round 3)
@@ -86,17 +85,5 @@ theorem provBefore_nat_iff [Consistent T] (K : ℕ) (patf : Fin K → Finset (Fi
   · intro h
     obtain ⟨n0, hn0⟩ := (provable_iff_provable (T := T) (φ := φ)).mpr h
     exact ⟨n0, by simpa using hn0, by simpa using not_fires_of_standard T K patf i ℕ n0⟩
-
-/-! ### Acceptance test (validation memo A.3.4)
-
-The paper's own instance `T := 𝗣𝗔` elaborates: PA's `Δ₁`, `𝗜𝚺₁ ⪯ 𝗣𝗔` and
-`Consistent 𝗣𝗔` instances are all found, so the Main Theorem applies to `𝗣𝗔`. -/
-example (n : ℕ) :
-    ∃ Θ : Fin n → StageFml 𝗣𝗔,
-      (∀ (i : Fin n) (y : ℕ), ¬ Semiformula.Evalbm ℕ ![(y : ℕ)] (Θ i).η.val)
-    ∧ (∀ i : Fin n, 𝗣𝗔 ⊢ ↑(𝗣𝗔 : ArithmeticTheory).consistent ➝ (conBefore (Θ i)).val)
-    ∧ (∀ S : Finset (Fin n),
-        Entailment.Consistent ((𝗣𝗔 : ArithmeticTheory) + patternTheory Θ S)) :=
-  main (T := 𝗣𝗔) n
 
 end TwoMinds

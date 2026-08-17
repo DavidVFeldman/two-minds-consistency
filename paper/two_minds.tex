@@ -38,7 +38,7 @@
 \address{Department of Mathematics and Statistics, University of New Hampshire}
 \email{dvfinnh@gmail.com}
 
-\date{\today\ (draft 6)}
+\date{August 2026}
 
 \subjclass[2020]{Primary 03F40; Secondary 03F30, 03C62, 03H15, 68V20}
 
@@ -92,7 +92,7 @@ the model. But not so fast. The sentence $\Con(\PA)$ is not handed to us
 by the theory; it is manufactured from choices---a G\"odel numbering, a
 formalized proof predicate, an enumeration of the axioms---and the
 independence phenomenon is notoriously sensitive to these choices. The
-purpose of this note is to make the sensitivity vivid in a sharp form:
+purpose of this note is to exhibit the sensitivity in a sharp form:
 we produce a \emph{single} model of $\PA$ which is of two minds about the
 consistency of $\PA$, satisfying one entirely natural-looking
 arithmetization of ``$\,\PA$ is consistent'' while refuting another, where
@@ -171,11 +171,11 @@ particular $\PA\vdash\Con(\PA)\to\Con_{T_i}(\PA)$;
 \]
 is consistent.
 \end{enumerate}
-Consequently, the implications $\Con(\PA)\to\Con_{T_i}(\PA)$ generate all
-provable implications among the sentences
-$\Con(\PA),\Con_{T_1}(\PA),\dots,\Con_{T_n}(\PA)$, and the realizable
-verdict patterns in models of $\PA$ are exactly: all verdicts true, or
-$\Con(\PA)$ false and the remaining verdicts arbitrary.
+Consequently the implications $\Con(\PA)\to\Con_{T_i}(\PA)$ generate
+every provable implication among the sentences $\Con(\PA)$ and
+$\Con_{T_1}(\PA),\dots,\Con_{T_n}(\PA)$. The verdict patterns
+realizable in models of $\PA$ are then exactly these: all verdicts
+true, or $\Con(\PA)$ false and the rest arbitrary.
 \end{theorem}
 
 Taking $n=2$ and $S=\{1\}$ yields the promised bifurcation.
@@ -189,7 +189,7 @@ satisfies the consistency of $\PA$ as formulated with the first and
 refutes it as formulated with the second.
 \end{corollary}
 
-The proof is a Rosser argument, but with a twist we found illuminating.
+The proof is a Rosser argument, with the witness comparison relocated.
 In Rosser's construction the witness comparison---``my proof comes before
 any refutation''---is written into the \emph{syntax} of the sentence. Here
 the comparison is relocated into the \emph{dynamics} of the machines: by
@@ -199,8 +199,7 @@ they conspire to \emph{instantiate} exactly that pattern, each machine
 halting or entering an eternal loop according to its role in it. Any proof
 constraining the pattern thereby defeats itself. No independence
 hypotheses on the machines are needed; the construction discharges,
-rather than assumes, the independence conditions posited in an earlier
-sketch of this result (see Remark~\ref{rem:dynamics}). The technique
+rather than assumes, any independence conditions (see Remark~\ref{rem:dynamics}). The technique
 belongs to the witness-comparison tradition systematized by Guaspari and
 Solovay \cite{GuaspariSolovay1979}, and the resulting consistency
 statements $\Con_T(\PA)$ are $\Pi_1$ sentences strictly intermediate
@@ -350,12 +349,12 @@ the witness $p$ itself satisfies
 $\Pf(p,\godel{0{=}1})\wedge\neg\HT{T_i}(p)$, so
 $\Prov_{T_i}(\godel{0{=}1})$, i.e.\ $\neg\Con_{T_i}(\PA)$.
 
-Conversely, suppose $\neg\Con(\PA)$ together with the displayed pattern of
-verdicts. By $\neg\Con(\PA)$ and the least number principle there is a
-least inconsistency proof $p$. For $i\in S$: $\Con_{T_i}(\PA)$ applied to
-$p$ yields $\HT{T_i}(p)$. For $i\notin S$: $\neg\Con_{T_i}(\PA)$ provides
-some $y$ with $\Pf(y,\godel{0{=}1})\wedge\neg\HT{T_i}(y)$; minimality
-gives $p\le y$, and monotonicity (contrapositively) gives
+Conversely, suppose $\neg\Con(\PA)$ holds together with the displayed
+pattern of verdicts. By the least number principle there is a
+least inconsistency proof $p$. For $i\in S$, applying $\Con_{T_i}(\PA)$
+to $p$ yields $\HT{T_i}(p)$. For $i\notin S$, $\neg\Con_{T_i}(\PA)$ gives
+some $y$ such that $\Pf(y,\godel{0{=}1})$ and $\neg\HT{T_i}(y)$;
+minimality gives $p\le y$, and monotonicity (contrapositively) gives
 $\neg\HT{T_i}(p)$. So $p$ witnesses $\sigma_S$.
 
 The final claim is the completeness theorem plus the observation that the
@@ -493,26 +492,22 @@ from syntax into dynamics, is thereby relocated back: the family
 $(\delta_S)$ is a simultaneous Rosser-style fixed point, each member
 asserting that its own pattern is not the one instantiated at the least
 trigger, and no recursion theorem beyond the diagonal lemma is needed.
-The two descriptions are intertranslatable; we find the dynamical one
-the more vivid and the syntactic one the more economical to verify.
+The two descriptions are intertranslatable; the syntactic one is the
+shorter to verify formally.
 \end{remark}
 
 \begin{remark}[Nonstandard dynamics; independence discharged]
 \label{rem:dynamics}
-An earlier sketch of this result posited, as hypotheses, the mutual
-independence of the halting statements of the machines and their joint
-independence from $\Con(\PA)$, and then faced the problem---correctly
-identified in that sketch---that Boolean independence cannot by itself
-control the \emph{relative position} of nonstandard witnesses: one needs
-$T_i$ to halt \emph{below} the least inconsistency proof, and no
-combination of independence hypotheses delivers an order-type. The
-construction above dissolves the problem rather than solving it: the
-machines are not chosen independent, they are chosen self-referential, so
-that any proof constraining the verdict pattern defeats itself, and the
-positional control is exactly what the pattern sentences $\sigma_S$
-assert.
+Boolean independence of the halting statements of the machines, and their
+joint independence from $\Con(\PA)$, would not suffice for
+Theorem~\ref{thm:main}: those hypotheses do not control the \emph{relative
+position} of nonstandard witnesses, and what the pattern sentences $\sigma_S$
+assert is precisely such a position, namely that $T_i$ halts below the least
+inconsistency proof. The construction supplies the positional control by
+self-reference rather than by independence: any proof constraining the verdict
+pattern defeats itself.
 
-It is worth pausing over what the machines actually do inside a model
+Inside a model
 $M\models\PA+\neg\Con(\PA)$. Since every sentence is $M$-provable there,
 each watched sentence has a (nonstandard) proof in $M$, so from $M$'s
 internal point of view the search \emph{does} trigger, at some
@@ -562,7 +557,7 @@ restricted consistency statements \cite{Pudlak1985} and of the slow
 consistency of Friedman, Rathjen, and Weiermann \cite{FRW2013} (see also
 Henk and Pakhomov \cite{HenkPakhomov}), but with a cutoff timed
 self-referentially by the recursion theorem rather than graded by a
-proof-theoretic hierarchy. It would be interesting to locate the
+proof-theoretic hierarchy. It remains to locate the
 $\Con_{T}(\PA)$ of Theorem~\ref{thm:main} in the interpretability degrees
 alongside those statements. % [tone down / expand after we check FRW and Pudlak carefully]
 \end{remark}
@@ -607,8 +602,7 @@ equivalence, as $\Con_T(\PA)$ for a machine $T$ that never halts? By
 Lemma~\ref{lem:sub}, $\PA\vdash\Con(\PA)\to\theta$ is necessary, and one
 might naively conjecture it sufficient, which would make the machine
 consistency statements a normal form for all $\Pi_1$ consequences of
-consistency. The situation is more delicate and, we think, more
-interesting. The key is to make explicit the Rosser-style race that has
+consistency. The situation is otherwise. The key is to make explicit the Rosser-style race that has
 been implicit throughout.
 
 \begin{definition}\label{def:HaltR}
@@ -658,7 +652,9 @@ Proposition~\ref{prop:normalform} gives
 \{[\Con_T(\PA)] : T\text{ never halts}\}
 \;=\;
 \{[\Con(\PA)\vee\rho] : \rho\in\mathcal{H}\},
-\qquad
+\]
+where
+\[
 \mathcal{H}:=\{[\mathrm{Halt}^R(T)] : T\text{ never halts}\},
 \]
 and $\mathcal{H}$ consists of ($\equiv$-classes of) $\Sigma_1$ sentences
@@ -784,7 +780,7 @@ sentence, in general:
 $\pi^{R}$ provably implies $\pi$, but the converse asks every model's
 witness to appear before its inconsistency proofs, which is a
 genuine positional demand. The case
-$\PA\vdash\rho\to\neg\Con(\PA)$ seems especially delicate: there,
+$\PA\vdash\rho\to\neg\Con(\PA)$ is the hardest: there,
 $\mathrm{Halt}^R(T)\equiv\rho$ would require the machine's Rosser
 victory---which the machine achieves precisely by seeing \emph{no}
 inconsistency proof before halting---to provably certify that
@@ -804,15 +800,15 @@ $(T_i)_{i\in\omega}$, none halting, realizing every ``locally
 permitted'' verdict pattern---for instance, such that for every set
 $A\subseteq\omega$ that is $\Sigma_1$-definable in a given model of
 $\PA+\neg\Con(\PA)$\dots\ ---in an appropriate formulation? Already the
-right statement of the infinitary classification seems delicate, since
+right statement of the infinitary classification is not evident, since
 $\sigma_S$ becomes infinitary.
 \end{question}
 
 \begin{question}\label{q:iterate}
-The map $T\mapsto\Con_T(\PA)$ invites iteration: one may form
-$\Con_T(\PA+\Con_{T'}(\PA))$ and so on. What hierarchy results, under
-provability or interpretability, and how does it interact with the
-classical progressions of iterated consistency?
+The map $T\mapsto\Con_T(\PA)$ invites iteration: one may form the
+sentence $\Con_T(\PA+\Con_{T'}(\PA))$, and so on. What hierarchy
+results, under provability or under interpretability, and how does it
+interact with the classical progressions of iterated consistency?
 \end{question}
 
 \subsection*{Acknowledgments}
@@ -879,99 +875,5 @@ J.~B.~Rosser,
 J. Symbolic Logic \textbf{1} (1936), no.~3, 87--91.
 
 \end{thebibliography}
-
-% ============================================================
-% DRAFT NOTES (not for publication) --- updated for draft 4
-%
-% -2. NEW IN DRAFT 4: mini round 3 landed and validated. Necessitation
-%    (`necessitation`) and extensional identity over N (`provBefore_nat_iff`)
-%    are now verified, so the intro's clause-(1) scoping was strengthened
-%    and the pending-comment deleted; Prop 6.4 (stage-formula form,
-%    `haltR_rhoStage_iff`) joined the verified list (intro + Remark on
-%    pacing). Raw #print axioms archived in the artifact (AXIOMS.txt);
-%    BUILD.md now documents the pinned triple and restore procedure.
-%    HONEST CAVEAT, reflected in the intro paragraph: the acceptance test
-%    `main (T := PA)` additionally depends on Foundation's
-%    `PA_delta1Definable` --- a literal `axiom` in the library stubbing
-%    the standard fact that PA is Delta_1-axiomatized (independently
-%    confirmed in Foundation source at the pin, Examples.lean:17). The
-%    generic development (all fourteen named results) is free of it.
-%    If Foundation later proves the instance, delete the caveat clause.
-%    REMAINING before submission: none outstanding. Repository/DOI filled in
-%    (concept DOI 10.5281/zenodo.21881585; version DOI ...586, v1.0.0).
-%
-% -1. NEW IN DRAFT 3: implemented edits E1-E7 from the round-2 validation
-%    memo, following full Lean verification of Thm 4.1, Cor 4.2, Prop 6.2:
-%      E1 Remark 4.3 (syntactic reading / simultaneous Rosser fixed point)
-%      E2 tie-break in Conv 2.1 + proof of Thm 4.1 (unique conclusions
-%         now a convenience, not a load-bearing assumption)
-%      E3 Remark 6.5 (pacing artifact) + restated Obstruction B
-%      E4 scope footnote on "assuming only Con(PA)" (clauses (1)-(3)
-%         machine-verified from Con alone; final clause needs PA |/- ~Con)
-%      E5 Remark base-theory upgraded to verified claim (Delta_1-axiomatized
-%         r.e. extensions of ISigma1)
-%      E6 eliminability note in Conv 2.1
-%      E7 formalization paragraph in intro + Aristotle/Foundation acks
-%    PENDING before submission: repository link (two places); Aristotle
-%    mini round 3 (necessitation corollary, extensional-identity corollary,
-%    PA-instantiation example, committed #print axioms outputs).
-%    If mini round 3 lands, delete the pending-comment in the intro
-%    paragraph and consider strengthening the intro's clause-(1) scoping.
-%
-% 0. NEW IN DRAFT 2 (single-author; JDH thanked in acks):
-%    Section 6 replaces the old naive Question ("is every Pi_1 consequence
-%    of Con a Con_T?"). The naive guess appears to be WRONG, or at least
-%    much subtler, and the section records what an evening's push showed:
-%    (a) PROVED normal form: Con_T <-> Con v Halt^R(T), for ALL T (the
-%        non-halting hypothesis is only needed for extensional
-%        correctness, not for the equivalence). Proof is 6 lines; checked
-%        both directions twice. Note the pleasant reading: "either
-%        consistency, or the machine beat the inconsistency to the tape."
-%    (b) PROVED realization: every Sigma_1 rho false in N contributes its
-%        clock-paced Rosser truncation rho^{R,c} to the class H. Note the
-%        truncation point is the machine CLOCK c(x), not the witness x
-%        itself --- the simulation overhead is ineliminable and this is
-%        exactly why (B) below is open rather than trivial. An earlier
-%        attempt truncated at the witness value; the two versions are
-%        provably inequivalent in general. Do not "simplify" this.
-%    (c) The classification reduces (Cor 6.5) to Obstructions (A) and (B),
-%        both posed as questions. Current beliefs: (A) fails (slow
-%        consistency the candidate; end-extension strategy sketched in
-%        the question); (B) fails (the rho -> ~Con case looks fatal:
-%        Halt^R(T) sees no inconsistency proof below the halt, yet would
-%        have to certify inconsistency above it; smells like it needs a
-%        reflection-like principle PA does not prove --- BUT this is a
-%        smell, not a proof; a clever speeded-up-proof-system machine
-%        might yet do it. Guaspari--Solovay / Lindstrom Ch. on Sigma_1
-%        sentences and witness comparison is where to look).
-%    Sanity checks run on (a): T = never-halting trivial machine gives
-%    Halt^R = false, Con_T = Con (correct); T = halt-at-step-0 machine
-%    gives Halt^R = true, Con_T = provable (correct: every proof of 0=1
-%    has H_T). These cost nothing and catch orientation errors.
-%
-% 1. [RESOLVED in draft 1] A tempting "independence for free" corollary
-%    (all Boolean patterns of Halt(T_i) vs ~Con realized) turned out to be
-%    subtler than it looks: Halt(T_i) provably implies only "some watched
-%    sentence is provable," not ~Con(PA); and sigma_S controls halting BY
-%    stage p, not eventual halting. Replaced by Remark on nonstandard
-%    dynamics, which makes the (correct and more interesting) point that
-%    in models of ~Con the machines really do trigger, at nonstandard
-%    stages. If we want a precise independence statement later, it needs
-%    its own argument; note models of Con(PA) can still prove some
-%    ~sigma_S internally... no wait, PA |/- ~sigma_S absolutely, but a
-%    MODEL of Con can satisfy Pr(~sigma_S) with a nonstandard proof. So
-%    even in Con-models the internal trigger may fire. Nice. Discuss.
-%
-% 2. Decide: state main theorem for PA only (current) or push to EA/S^1_2.
-%
-% 3. Question 6.6 formulation is a placeholder; sharpen or cut.
-%
-% 4. [DROPPED in draft 6] There was no MathOverflow thread on this topic;
-%    the exchange with Hamkins was direct correspondence. Acknowledgments
-%    corrected accordingly.
-%
-% 5. Abstract currently promises "recursion theorem" --- confirm we want
-%    the controller-index phrasing in Section 4 or the n-fold statement.
-% ============================================================
 
 \end{document}

@@ -1,0 +1,30 @@
+{
+  "title": "Models of arithmetic of two minds about consistency: Lean 4 formalization",
+  "description": "Complete Lean 4 formalization, over the Foundation library, accompanying the paper \"Models of arithmetic of two minds about consistency\". Machine-checked: the Main Theorem (every verdict pattern realized), the two-minds corollary, the Reformulation Lemma, the normal form theorem, and the realization theorem in stage-formula form. No sorry; standard axiom footprint.",
+  "creators": [
+    {
+      "name": "Feldman, David Victor",
+      "affiliation": "University of New Hampshire",
+      "orcid": "0000-0001-6943-4833"
+    }
+  ],
+  "upload_type": "software",
+  "license": "mit",
+  "keywords": [
+    "Lean 4",
+    "formalization",
+    "Peano arithmetic",
+    "provability predicate",
+    "Goedel incompleteness",
+    "intensionality",
+    "Rosser sentences",
+    "models of arithmetic"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/DavidVFeldman/two-minds-consistency",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

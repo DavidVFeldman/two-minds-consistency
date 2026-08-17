@@ -20,15 +20,15 @@ extending `IΣ₁`. The paper states its results for `PA`, which is an instance.
 | Lemma 2.3, `Con_T ↔ ¬Pr_T(⊥)` | `conBefore_iff_not_provBefore_bot` | yes |
 | Sanity checks (trivial / instant stages) | `conBefore_botStage_iff_consistent`, `conBefore_topStage` | yes |
 | Lemma 2.3(1) (subpredicate; `Con → Con_T`) | `provBefore_imp_provable`, `consistent_imp_conBefore` | yes |
-| Lemma 2.3(2) (defines provability in ℕ) | `provBefore_nat_iff` | yes |
+| Lemma 2.3(2) (defines provability in ℕ) | `provBefore_nat_iff`, and clause (5) of `main` | yes |
 | Thm. 4.1(1), never halts | `never_fires` | yes |
-| Thm. 4.1(1), necessitation (D1) | `necessitation` | yes |
+| Thm. 4.1(1), necessitation (D1) | `necessitation`, and clause (4) of `main` | yes |
 | Thm. 4.1(2) (`Con → Con_{Tᵢ}`) | clause of `main` | yes |
 | Thm. 4.1(3) (every pattern consistent) | clause of `main`, via `patternTheory_consistent` | yes, with the consistency translation below |
 | Thm. 4.1, final classification clause | — | not formalized (see below) |
-| Lemma 3.1 (Reformulation) | `reformulation` | yes |
+| Lemma 3.1 (Reformulation) | `reformulation` | yes — no consistency hypothesis, as in the paper |
 | Thm. 4.1 core (self-defeat) | `no_watched_provable` | yes |
-| Cor. 4.2 (two minds) | `two_minds` | yes |
+| Cor. 4.2 (two minds) | `two_minds` | yes — the statement itself carries extensional correctness and provable soundness of both predicates, not only the consistency claim |
 | Prop. 6.2 (Normal form) | `conBefore_iff_consistent_or_haltR` | yes |
 | Prop. 6.4 (Realization) | `haltR_rhoStage_iff` | stage-formula form (paper Remark 6.5) |
 | Cor. 6.5, Questions 6.6–6.9 | — | not formalized (discussion of open problems) |
@@ -94,3 +94,15 @@ genuine instances, not stubs.
 * Remark 5.1, which is expository.
 
 No theorem statement was weakened to make a proof go through.
+
+## Statements carry what they claim
+
+`main` asserts all five properties the paper's Theorem 4.1 attributes to the
+constructed family — never firing in ℕ, provable soundness, consistency of every
+verdict pattern, necessitation, and extensional correctness over ℕ — so a reader
+who destructures the existential recovers the full theorem rather than a
+fragment. `two_minds` likewise asserts extensional correctness and provable
+soundness of both predicates alongside the consistency claim; without those
+clauses it would be satisfiable by a degenerate pair of stage formulas carrying
+none of the paper's content, and the development includes a machine-checked
+`example` recording that the cheap `topStage` witness is excluded.

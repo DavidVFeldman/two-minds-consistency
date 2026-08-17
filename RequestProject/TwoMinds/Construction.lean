@@ -338,7 +338,7 @@ theorem patConj_eval (K : ℕ) (patf : Fin K → Finset (Fin n)) (S : Finset (Fi
     apply_ite (Semiformula.Evalbm M ![])]
 
 /-- **Reformulation Lemma (L5′ / paper Lemma 3.1).** -/
-theorem reformulation [Consistent T] (K : ℕ) (patf : Fin K → Finset (Fin n))
+theorem reformulation (K : ℕ) (patf : Fin K → Finset (Fin n))
     (S : Finset (Fin n)) :
     T ⊢ (sigmaC T K patf S) ⭤ (patConj T K patf S) := by
   refine provable_of_models T _ (fun (M : Type) _ hMT => ?_)
